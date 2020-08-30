@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import wandrey.bruno.loadbalancer.model.DataModel;
-import wandrey.bruno.loadbalancer.service.DataService;
+import wandrey.bruno.loadbalancer.model.ServiceRegistrationModel;
+import wandrey.bruno.loadbalancer.service.ServiceRegistrationService;
 
 /**
  * @author Bruno Wandrey
@@ -22,20 +22,20 @@ import wandrey.bruno.loadbalancer.service.DataService;
  */
 
 @RestController
-@RequestMapping("/data/")
-public class DataController {
+@RequestMapping("/service-registration/")
+public class ServiceRegistrationController {
 
 	@Autowired
-	DataService dataService;
+	ServiceRegistrationService srService;
 
 	@GetMapping
-	public Page<DataModel> getPage(@PageableDefault(size = 15, page = 0) Pageable page) {
-		return dataService.getPage(page);
+	public Page<ServiceRegistrationModel> getPage(@PageableDefault(size = 15, page = 0) Pageable page) {
+		return srService.getPage(page);
 	}
 
 	@PostMapping
-	public DataModel postData(@RequestBody DataModel data) {
-		return dataService.postData(data);
+	public ServiceRegistrationModel postData(@RequestBody ServiceRegistrationModel data) {
+		return srService.postData(data);
 	}
 
 }

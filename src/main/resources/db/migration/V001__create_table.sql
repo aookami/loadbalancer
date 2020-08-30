@@ -1,13 +1,11 @@
-CREATE TABLE data_table (
-	id bigint auto_increment primary key,
-	name varchar(255),
-	data blob,
-	file_type varchar(255)
+
+CREATE TABLE service_registry (
+	id SERIAL primary key,
+	name varchar(250),
+	ip varchar(250),
+	port varchar(20),
+	version varchar(250),
+	score BIGINT,
+	last_heartbeat timestamp
 );
-
-
-insert into data_table (name, data, file_type) values ('1rst data', null, 'string');
-insert into data_table (name, data, file_type) values ('2nd data', null , 'string');
-
-
 
