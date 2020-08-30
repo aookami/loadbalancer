@@ -20,6 +20,6 @@ public interface ServiceRegistrationRepository extends JpaRepository<ServiceRegi
 	/**
 	 * @return
 	 */
-	List<ServiceRegistrationModel> findByName();
+	List<ServiceRegistrationModel> findByName(String name);
 
 }

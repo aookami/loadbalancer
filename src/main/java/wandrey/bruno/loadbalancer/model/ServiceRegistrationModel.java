@@ -26,24 +26,24 @@ public class ServiceRegistrationModel {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "\"id\"")
+	@Column(name = "id")
 	String id;
 
-	@Column(name = "\"ip\"")
+	@Column(name = "ip")
 	String ip;
-	@Column(name = "\"port\"")
+	@Column(name = "port")
 	String port;
-	@Column(name = "\"name\"")
+	@Column(name = "name")
 	String name;
-	@Column(name = "\"version\"")
+	@Column(name = "version")
 	String version;
 
 	// the higher the score, the most likely the lb is to send traffic to the
 	// service;
-	@Column(name = "\"score\"")
+	@Column(name = "score")
 	Long score;
 
-	@Column(name = "\"last_heartbeat\"")
+	@Column(name = "last_heartbeat")
 	Timestamp lastHeartbeat;
 
 }

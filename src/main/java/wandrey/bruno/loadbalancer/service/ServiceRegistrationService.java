@@ -53,7 +53,7 @@ public class ServiceRegistrationService {
 	}
 
 	public List<ServiceRegistrationModel> getServiceRegistrationByService(String service) {
-		return srRepository.findByName();
+		return srRepository.findByName(service);
 	}
 
 }

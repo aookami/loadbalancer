@@ -1,5 +1,5 @@
 
-CREATE TABLE service_registry (
+CREATE TABLE if not exists service_registry (
 	id SERIAL primary key,
 	name varchar(250),
 	ip varchar(250),

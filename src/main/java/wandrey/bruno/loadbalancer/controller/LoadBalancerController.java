@@ -5,6 +5,7 @@ package wandrey.bruno.loadbalancer.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +25,7 @@ public class LoadBalancerController {
 	LoadBalancerService lbService;
 
 	@GetMapping
-	public <T> T processRequest(RequestModel request) {
+	public <T> T processRequest(@RequestBody RequestModel request) {
 
 		return lbService.redirect(request);
 

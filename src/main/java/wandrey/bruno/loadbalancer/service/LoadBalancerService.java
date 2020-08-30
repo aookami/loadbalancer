@@ -19,6 +19,9 @@ import wandrey.bruno.loadbalancer.model.ServiceRegistrationModel;
 public class LoadBalancerService {
 
 	@Autowired
+	StatisticsService statisticsService;
+
+	@Autowired
 	ServiceRegistrationService srService;
 
 	/**
@@ -26,7 +29,13 @@ public class LoadBalancerService {
 	 * @return
 	 */
 	public <T> T redirect(RequestModel request) {
+
 		List<ServiceRegistrationModel> serviceList = srService.getServiceRegistrationByService(request.getService());
+
+		if (serviceList.isEmpty()) {
+			throw new RuntimeException("ServiceRegistration not found");
+		}
+
 		// how to choose the service the lb is going to forward the request?
 		// lets say we have three services registered
 		// 1 - 100 score
@@ -48,7 +57,8 @@ public class LoadBalancerService {
 		for (ServiceRegistrationModel sr : serviceList) {
 			sumOfScores = sumOfScores + sr.getScore();
 		}
-		Long randomNum = Long.valueOf(Double.toString(Math.floor(sumOfScores * Math.random())));
+
+		Long randomNum = Double.valueOf(Math.floor(sumOfScores * Math.random())).longValue();
 
 		ServiceRegistrationModel srToBeUsed = null;
 		for (ServiceRegistrationModel sr : serviceList) {
@@ -59,11 +69,14 @@ public class LoadBalancerService {
 			}
 		}
 
+		System.out.println("IVE PICKED" + srToBeUsed.getName() + srToBeUsed.getId());
+
+		statisticsService.addCountToCounterMap(srToBeUsed.getName() + srToBeUsed.getId());
+
 		if (srToBeUsed == null)
 			srToBeUsed = serviceList.get(0);
 
-		System.out.println(srToBeUsed);
-
+		System.out.println(statisticsService.getCounterMap().toString());
 		return null;
 	}
 
