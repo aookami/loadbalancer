@@ -1,4 +1,4 @@
-package wandrey.bruno.testbench;
+package wandrey.bruno.loadbalancer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

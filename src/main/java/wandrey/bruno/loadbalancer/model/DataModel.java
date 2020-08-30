@@ -1,7 +1,7 @@
 /**
  *
  */
-package wandrey.bruno.testbench.model;
+package wandrey.bruno.loadbalancer.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

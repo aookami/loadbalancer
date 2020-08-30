@@ -1,12 +1,12 @@
 /**
  *
  */
-package wandrey.bruno.testbench.repository;
+package wandrey.bruno.loadbalancer.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import wandrey.bruno.testbench.model.DataModel;
+import wandrey.bruno.loadbalancer.model.DataModel;
 
 /**
  * @author Bruno Wandrey

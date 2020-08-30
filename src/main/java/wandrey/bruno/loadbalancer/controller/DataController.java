@@ -1,7 +1,7 @@
 /**
  *
  */
-package wandrey.bruno.testbench.controller;
+package wandrey.bruno.loadbalancer.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import wandrey.bruno.testbench.model.DataModel;
-import wandrey.bruno.testbench.service.DataService;
+import wandrey.bruno.loadbalancer.model.DataModel;
+import wandrey.bruno.loadbalancer.service.DataService;
 
 /**
  * @author Bruno Wandrey

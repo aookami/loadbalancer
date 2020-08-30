@@ -1,7 +1,7 @@
 /**
  *
  */
-package wandrey.bruno.testbench.service;
+package wandrey.bruno.loadbalancer.service;
 
 import java.io.IOException;
 
@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import wandrey.bruno.testbench.model.DataModel;
-import wandrey.bruno.testbench.repository.DataRepository;
+import wandrey.bruno.loadbalancer.model.DataModel;
+import wandrey.bruno.loadbalancer.repository.DataRepository;
 
 /**
  * @author Bruno Wandrey
