@@ -1,4 +1,5 @@
 import flask
+from flask import request
 import string
 import random
 import time
@@ -28,8 +29,16 @@ def healthCheck():
     
 
 @app.route('/data/', methods=['GET'])
-def data():
-    return "HERES YOUR DATA: " + str(get_random_string(15))
+def dataGet():
+    return "HERES YOUR DATA: " + str(get_random_string(15))  + " from " + sys.argv[1] + "!"
+    
+    
+
+@app.route('/data/', methods=['POST'])
+def dataPost():
+    return "HERES YOUR DATA: " + str(get_random_string(15))  + " from " + sys.argv[1] + "! - Content is: " + str(request.data)
+    
+    
 
 app.run(host='0.0.0.0', port=sys.argv[1])
 

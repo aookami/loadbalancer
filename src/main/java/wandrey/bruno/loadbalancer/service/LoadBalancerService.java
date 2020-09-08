@@ -3,12 +3,21 @@
  */
 package wandrey.bruno.loadbalancer.service;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import wandrey.bruno.loadbalancer.model.RequestModel;
 import wandrey.bruno.loadbalancer.model.ServiceRegistrationModel;
 
 /**
@@ -27,10 +36,46 @@ public class LoadBalancerService {
 	/**
 	 * @param request
 	 * @return
+	 * @throws IOException
 	 */
-	public <T> T redirect(RequestModel request) {
+	public <T, U> T redirectGET(String service, U body) throws IOException {
 
-		List<ServiceRegistrationModel> serviceList = srService.getServiceRegistrationByService(request.getService());
+		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+		if (requestAttributes instanceof ServletRequestAttributes) {
+
+			ServiceRegistrationModel serviceRegistrationModel = getServiceRegistration(service);
+
+			URL url = new URL(
+					"http://" + serviceRegistrationModel.getIp() + ":" + serviceRegistrationModel.getPort() + "/data/");
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setRequestProperty("Content-Type", "application/json");
+			conn.setDoOutput(true);
+
+			write(conn.getOutputStream(), body);
+
+			String text = null;
+			try (Scanner scanner = new Scanner(conn.getInputStream(), StandardCharsets.UTF_8.name())) {
+				text = scanner.useDelimiter("\\A").next();
+			}
+			return (T) text;
+
+		}
+
+		return null;
+
+	}
+
+	public <T, U> T redirectPOST(String service, U body) throws IOException {
+		return null;
+	}
+
+	/**
+	 * @param <U>
+	 * @param request
+	 */
+	private <U> ServiceRegistrationModel getServiceRegistration(U request) {
+		List<ServiceRegistrationModel> serviceList = srService.getServiceRegistrationByService(request.toString());
 
 		if (serviceList.isEmpty()) {
 			throw new RuntimeException("ServiceRegistration not found");
@@ -76,8 +121,17 @@ public class LoadBalancerService {
 		if (srToBeUsed == null)
 			srToBeUsed = serviceList.get(0);
 
-		System.out.println(statisticsService.getCounterMap().toString());
-		return null;
+		return srToBeUsed;
+	}
+
+	public <T> void write(OutputStream stream, T object) throws IOException {
+		if (object instanceof Object) {
+			stream.write(object.toString().getBytes());
+		} else if (object instanceof LinkedHashMap) {
+			stream.write(object.toString().getBytes());
+		} else
+			stream.write(object.toString().getBytes());
+
 	}
 
 }
