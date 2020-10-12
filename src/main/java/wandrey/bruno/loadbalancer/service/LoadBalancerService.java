@@ -8,9 +8,12 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Scanner;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import wandrey.bruno.loadbalancer.logger.service.LoggingService;
 import wandrey.bruno.loadbalancer.model.ServiceRegistrationModel;
 
 /**
@@ -33,17 +37,22 @@ public class LoadBalancerService {
 	@Autowired
 	ServiceRegistrationService srService;
 
+	@Autowired
+	LoggingService loggingService;
+
 	/**
 	 * @param request
 	 * @return
 	 * @throws IOException
 	 */
-	public <T, U> T redirectGET(String service, U body) throws IOException {
+	public <T, U> T redirectGET(String service, U body, HttpServletRequest request) throws IOException {
 
 		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 		if (requestAttributes instanceof ServletRequestAttributes) {
 
 			ServiceRegistrationModel serviceRegistrationModel = getServiceRegistration(service);
+			loggingService.logRouting(String.valueOf(body), request.getRemoteAddr(), Instant.now(),
+					serviceRegistrationModel.getName());
 
 			URL url = new URL(
 					"http://" + serviceRegistrationModel.getIp() + ":" + serviceRegistrationModel.getPort() + "/data/");
@@ -58,6 +67,7 @@ public class LoadBalancerService {
 			try (Scanner scanner = new Scanner(conn.getInputStream(), StandardCharsets.UTF_8.name())) {
 				text = scanner.useDelimiter("\\A").next();
 			}
+
 			return (T) text;
 
 		}

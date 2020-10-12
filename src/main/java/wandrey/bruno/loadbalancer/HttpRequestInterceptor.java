@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,11 +25,12 @@ public class HttpRequestInterceptor implements HandlerInterceptor {
 	@Autowired
 	LoadBalancerService loadBalancerService;
 
+	@Autowired
+	ApplicationContext context;
+
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-
-		System.out.println("I've intercepted the request");
 
 		return true;
 	}
@@ -44,4 +46,5 @@ public class HttpRequestInterceptor implements HandlerInterceptor {
 			Exception ex) {
 
 	}
+
 }
