@@ -45,7 +45,7 @@ public class LoadBalancerService {
 	 * @return
 	 * @throws IOException
 	 */
-	public <T, U> T redirectGET(String service, U body, HttpServletRequest request) throws IOException {
+	public <T, U> T redirect(String service, U body, HttpServletRequest request) throws IOException {
 
 		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 		if (requestAttributes instanceof ServletRequestAttributes) {
@@ -57,7 +57,8 @@ public class LoadBalancerService {
 			URL url = new URL(
 					"http://" + serviceRegistrationModel.getIp() + ":" + serviceRegistrationModel.getPort() + "/data/");
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("GET");
+
+			conn.setRequestMethod(request.getMethod());
 			conn.setRequestProperty("Content-Type", "application/json");
 			conn.setDoOutput(true);
 
@@ -74,10 +75,6 @@ public class LoadBalancerService {
 
 		return null;
 
-	}
-
-	public <T, U> T redirectPOST(String service, U body) throws IOException {
-		return null;
 	}
 
 	/**

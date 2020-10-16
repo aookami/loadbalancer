@@ -36,6 +36,7 @@ def dataGet():
 
 @app.route('/data/', methods=['POST'])
 def dataPost():
+    print(request.data)
     return "HERES YOUR DATA: " + str(get_random_string(15))  + " from " + sys.argv[1] + "! - Content is: " + str(request.data)
     
     

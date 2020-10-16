@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,14 +38,25 @@ public class LoadBalancerController {
 	@GetMapping
 	public <T, U> T processRequestGET(@RequestParam("service") String service, @RequestBody U body,
 			HttpServletRequest request) throws IOException {
-		return lbService.redirectGET(service, body, request);
+		return lbService.redirect(service, body, request);
 	}
 
 	@PostMapping
-	public <T, U> T processRequestPOST(@RequestParam("service") String service, @RequestBody U body)
-			throws IOException {
-		System.out.println(applicationContext);
-		return lbService.redirectPOST(service, body);
+	public <T, U> T processRequestPOST(@RequestParam("service") String service, @RequestBody U body,
+			HttpServletRequest request) throws IOException {
+		return lbService.redirect(service, body, request);
+	}
+
+	@PutMapping
+	public <T, U> T processRequestPUT(@RequestParam("service") String service, @RequestBody U body,
+			HttpServletRequest request) throws IOException {
+		return lbService.redirect(service, body, request);
+	}
+
+	@DeleteMapping
+	public <T, U> T processRequestDELETE(@RequestParam("service") String service, @RequestBody U body,
+			HttpServletRequest request) throws IOException {
+		return lbService.redirect(service, body, request);
 	}
 
 }
