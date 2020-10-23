@@ -3,14 +3,16 @@
  */
 package wandrey.bruno.loadbalancer.model;
 
-import java.sql.Timestamp;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
@@ -29,21 +31,23 @@ public class ServiceRegistrationModel {
 	@Column(name = "id")
 	String id;
 
+	@Column(name = "protocol")
+	String protocol;
+
 	@Column(name = "ip")
 	String ip;
 	@Column(name = "port")
 	String port;
-	@Column(name = "name")
-	String name;
+
+	@ManyToOne
+	@JoinColumn(name = "service_id", nullable = false)
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	ServiceModel service;
+
 	@Column(name = "version")
 	String version;
 
-	// the higher the score, the most likely the lb is to send traffic to the
-	// service;
 	@Column(name = "score")
 	Long score;
-
-	@Column(name = "last_heartbeat")
-	Timestamp lastHeartbeat;
 
 }

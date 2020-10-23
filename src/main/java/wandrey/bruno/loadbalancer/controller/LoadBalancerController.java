@@ -37,25 +37,25 @@ public class LoadBalancerController {
 	ApplicationContext applicationContext;
 
 	@GetMapping
-	public <T, U> ResponseEntity<T> processRequestGET(@RequestParam("service") String service,
+	public <U> ResponseEntity<byte[]> processRequestGET(@RequestParam("service") String service,
 			@RequestParam("uri") String uri, @RequestBody U body, HttpServletRequest request) throws IOException {
 		return lbService.redirect(service, uri, body, request);
 	}
 
 	@PostMapping
-	public <T, U> ResponseEntity<T> processRequestPOST(@RequestParam("service") String service,
+	public <U> ResponseEntity<byte[]> processRequestPOST(@RequestParam("service") String service,
 			@RequestParam("uri") String uri, @RequestBody U body, HttpServletRequest request) throws IOException {
 		return lbService.redirect(service, uri, body, request);
 	}
 
 	@PutMapping
-	public <T, U> ResponseEntity<T> processRequestPUT(@RequestParam("service") String service,
+	public <U> ResponseEntity<byte[]> processRequestPUT(@RequestParam("service") String service,
 			@RequestParam("uri") String uri, @RequestBody U body, HttpServletRequest request) throws IOException {
 		return lbService.redirect(service, uri, body, request);
 	}
 
 	@DeleteMapping
-	public <T, U> ResponseEntity<T> processRequestDELETE(@RequestParam("service") String service,
+	public <U> ResponseEntity<byte[]> processRequestDELETE(@RequestParam("service") String service,
 			@RequestParam("uri") String uri, @RequestBody U body, HttpServletRequest request) throws IOException {
 		return lbService.redirect(service, uri, body, request);
 	}

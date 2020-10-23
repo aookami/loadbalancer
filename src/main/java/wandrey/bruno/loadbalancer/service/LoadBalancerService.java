@@ -4,11 +4,8 @@
 package wandrey.bruno.loadbalancer.service;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.MalformedURLException;
 import java.time.Instant;
-import java.util.LinkedHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,7 +17,12 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import wandrey.bruno.loadbalancer.exception.ProtocolNotFoundException;
+import wandrey.bruno.loadbalancer.factory.ConnectionProtocolFactory;
+import wandrey.bruno.loadbalancer.factory.SelectionStrategyFactory;
 import wandrey.bruno.loadbalancer.logger.service.LoggingService;
+import wandrey.bruno.loadbalancer.model.ConnectionData;
+import wandrey.bruno.loadbalancer.model.ServiceModel;
 import wandrey.bruno.loadbalancer.model.ServiceRegistrationModel;
 
 /**
@@ -34,7 +36,10 @@ public class LoadBalancerService {
 	StatisticsService statisticsService;
 
 	@Autowired
-	ServiceRegistrationService srService;
+	ServiceRegistrationService serviceRegistrationService;
+
+	@Autowired
+	ServiceService serviceService;
 
 	@Autowired
 	LoggingService loggingService;
@@ -43,51 +48,39 @@ public class LoadBalancerService {
 	 * @param request
 	 * @return
 	 * @throws IOException
+	 * @throws ProtocolNotFoundException
 	 */
-	public <T, U> ResponseEntity<T> redirect(String service, String uri, U body, HttpServletRequest request)
+	public <U> ResponseEntity<byte[]> redirect(String serviceName, String uri, U body, HttpServletRequest request)
 			throws IOException {
 
 		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 		if (requestAttributes instanceof ServletRequestAttributes) {
 
-			ServiceRegistrationModel serviceRegistrationModel = srService.getServiceRegistration(service);
+			ServiceModel service = serviceService.findByName(serviceName);
 
-			loggingService.logRouting(String.valueOf(body), request.getRemoteAddr(), Instant.now(),
-					serviceRegistrationModel.getName());
+			ServiceRegistrationModel serviceRegistrationModel = serviceRegistrationService.applyStrategy(
+					service.getServiceRegistrationModelList(),
+					SelectionStrategyFactory.getStrategy(service.getStrategy()));
 
-			URL url = new URL(
-					"http://" + serviceRegistrationModel.getIp() + ":" + serviceRegistrationModel.getPort() + uri);
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			loggingService.logRouting(String.valueOf(body), request.getRemoteAddr(), Instant.now(), service.getName());
 
-			conn.setRequestMethod(request.getMethod());
-			conn.setRequestProperty("Content-Type", "application/json");
-			conn.setDoOutput(true);
+			try {
 
-			write(conn.getOutputStream(), body);
-
-			byte[] targetArray = new byte[conn.getInputStream().available()];
-			targetArray = conn.getInputStream().readAllBytes();
-
-			return new ResponseEntity<>((T) targetArray, HttpStatus.valueOf(conn.getResponseCode()));
+				ConnectionData receivedData = ConnectionProtocolFactory
+						.getConnectionProtocol(serviceRegistrationModel.getProtocol()).getConnectionHandler()
+						.processConnection(request, serviceRegistrationModel, uri, body);
+				return new ResponseEntity<>(receivedData.getPayload(), HttpStatus.OK);
+			} catch (MalformedURLException e) {
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			} catch (ProtocolNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
 		}
 
 		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-
-	}
-
-	/**
-	 * @param <U>
-	 * @param request
-	 */
-
-	public <T> void write(OutputStream stream, T object) throws IOException {
-		if (object instanceof Object) {
-			stream.write(object.toString().getBytes());
-		} else if (object instanceof LinkedHashMap) {
-			stream.write(object.toString().getBytes());
-		} else
-			stream.write(object.toString().getBytes());
 
 	}
 
